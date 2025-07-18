@@ -15,8 +15,8 @@
         public string? Patient_City { get; set; }
         public string? Patient_State { get; set; }
         public string Patient_PostalCode { get; set; }
-
         public string Patient_CreatedBy { get; set; }
+        public DateTime Patient_CreatedAt { get; set; }
         public string? Patient_ModifiedBy { get; set; }
         public DateTime? Patient_ModifiedAt { get; set; }
     }
