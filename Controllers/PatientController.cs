@@ -40,25 +40,37 @@ public class PatientController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Patient patient)
     {
+        if (string.IsNullOrWhiteSpace(patient.Patient_FirstName))
+            return BadRequest(new { error = "Patient_FirstName is required" });
+
         var existing = await _repository.GetByRutAsync(patient.Patient_RUT);
-        if (existing != null) return Conflict("Ya existe un paciente con ese RUT.");
+        if (existing != null)
+            return Conflict("Ya existe un paciente con ese RUT.");
 
         patient.Patient_CreatedBy = "api"; // puedes reemplazar con usuario logueado
+        patient.Patient_CreatedAt = DateTime.Now;
+
         var id = await _repository.CreateAsync(patient);
         patient.Patient_Id = id;
+
         return CreatedAtAction(nameof(GetById), new { id }, patient);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Patient patient)
     {
-        var existing = await _repository.GetByIdAsync(id);
-        if (existing == null) return NotFound();
+        if (id != patient.Patient_Id)
+            return BadRequest();
 
-        patient.Patient_Id = id;
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null)
+            return NotFound();
+
         patient.Patient_ModifiedBy = "api";
+        patient.Patient_ModifiedAt = DateTime.Now;
+
         var result = await _repository.UpdateAsync(patient);
-        return result ? NoContent() : StatusCode(500);
+        return result ? Ok(patient) : StatusCode(500);
     }
 
     [HttpDelete("{id}")]
