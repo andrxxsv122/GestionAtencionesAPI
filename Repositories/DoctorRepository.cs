@@ -33,15 +33,22 @@ public class DoctorRepository : IDoctorRepository
         return await conn.QueryFirstOrDefaultAsync<Doctor>(query, new { LicenseNumber = licenseNumber });
     }
 
+    public async Task<IEnumerable<Doctor>> GetBySpecialityIdAsync(int specialityId)
+    {
+        var query = "SELECT * FROM Doctor WHERE SpecialityId = @SpecialityId";
+        using var conn = _db.CreateConnection();
+        return await conn.QueryAsync<Doctor>(query, new { SpecialityId = specialityId });
+    }
+
     public async Task<int> CreateAsync(Doctor doctor)
     {
         var query = @"
             INSERT INTO Doctor (
                 Doctor_FirstName, Doctor_LastName, Doctor_Email, Doctor_Phone,
-                Doctor_LicenseNumber, SpecialityId, Doctor_CreatedBy
+                Doctor_LicenseNumber, SpecialityId, Doctor_CreatedBy,Doctor_CreatedAt
             ) VALUES (
                 @Doctor_FirstName, @Doctor_LastName, @Doctor_Email, @Doctor_Phone,
-                @Doctor_LicenseNumber, @SpecialityId, @Doctor_CreatedBy
+                @Doctor_LicenseNumber, @SpecialityId, @Doctor_CreatedBy, @Doctor_CreatedAt
             );
             SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
