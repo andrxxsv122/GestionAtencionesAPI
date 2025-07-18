@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DbContext>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
-
+builder.Services.AddScoped<ISpecialityRepository, SpecialityRepository>();
 
 var app = builder.Build();
 
