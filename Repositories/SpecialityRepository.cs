@@ -25,12 +25,18 @@ public class SpecialityRepository : ISpecialityRepository
         using var conn = _db.CreateConnection();
         return await conn.QueryFirstOrDefaultAsync<Speciality>(query, new { Id = id });
     }
+    public async Task<Speciality?> GetByNameAsync(string name)
+    {
+        var query = "SELECT * FROM Speciality WHERE Speciality_Name = @Name";
+        using var conn = _db.CreateConnection();
+        return await conn.QueryFirstOrDefaultAsync<Speciality>(query, new { Name = name });
+    }
 
     public async Task<int> CreateAsync(Speciality speciality)
     {
         var query = @"
-            INSERT INTO Speciality (Speciality_Name, Speciality_Description, Speciality_CreatedBy)
-            VALUES (@Speciality_Name, @Speciality_Description, @Speciality_CreatedBy);
+            INSERT INTO Speciality (Speciality_Name, Speciality_Description, Speciality_CreatedBy, Speciality_CreatedAt)
+            VALUES (@Speciality_Name, @Speciality_Description, @Speciality_CreatedBy, @Speciality_CreatedAt);
             SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
         using var conn = _db.CreateConnection();
